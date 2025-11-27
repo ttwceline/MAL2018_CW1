@@ -89,3 +89,58 @@ CREATE TABLE CW1.Rating(
     FOREIGN KEY (trail_id) REFERENCES CW1.Trail(trail_id) ON DELETE CASCADE
 );
 
+
+
+
+/*4. INSERTING DATA INTO THE TABLES*/
+INSERT INTO CW1.Users (user_name,user_email,user_password) VALUES
+    ('Ada Lovelace', 'grace@plymouth.ac.uk', 'ISAD123!'),
+    ('Tim Berners-Lee', 'tim@plymouth.ac.uk', 'COMP2001!'),
+    ('Ada Lovelace', 'ada@plymouth.ac.uk', 'insecurePassword');
+
+INSERT INTO CW1.Geographical_Info (trail_longitude, trail_latitude) VALUES
+    (-4.07859, 50.40886),
+    (-4.13415, 50.36891);
+
+INSERT INTO CW1.Trail_Location (geographical_id, location_name, country, state, city) VALUES
+    (1, 'Plymbridge Circular', 'England', 'Devon', 'Plymouth'),
+    (2, 'Plymouth Waterfront and Plymouth Hoe Circular', 'England', 'Devon', 'Plymouth');
+
+INSERT INTO CW1.Trail (location_id, user_id, estimated_time_min, estimated_time_max, route_type, difficulty, trail_name, elevation_gain, length) VALUES 
+    (1,1, '01:30:00', '02:00:00', 'Loop', 'Easy', 'Plymbridge Circular', 147, 5.00),
+    (2,2, '01:00:00', '01:30:00', 'Loop', 'Easy', 'Plymouth Waterfront and Plymouth Hoe Circular', 83, 4.80);
+
+INSERT INTO CW1.Sights (top_sight_name) VALUES
+    ('River Plym'),
+    ('Officers Quaters & Mess'),
+    ('Great Store'),
+    ('The Mayflower Steps'),
+    ('List of Pilgrims who left Plymouth on the Mayflower'),
+    ('The Belvedere'),
+    ('Custom House');
+
+INSERT INTO CW1.Trail_Sights (sights_id, trail_id) VALUES
+    (1, 1),
+    (2, 2),
+    (3, 2),
+    (4, 2),
+    (5, 2),
+    (6, 2),
+    (7, 2);
+
+INSERT INTO CW1.Rating (user_id, trail_id, review_text, star_rating) VALUES
+    (1, 1, 'Nice place and quite an easy trail. Recommended for beginners.', 4),
+    (1, 2, 'Beautiful sceneries, great place to take a morning hike. Fun family place!', 5),
+    (3, 1, 'Love this place! Not really steep, quite shady.', 5);
+
+/*5. SELECTING TABLES WITH DATA*/
+SELECT * FROM CW1.Users;
+SELECT * FROM CW1.Geographical_Info;
+SELECT * FROM CW1.[Trail_Location];
+SELECT * FROM CW1.Trail;
+SELECT * FROM CW1.Sights;
+SELECT * FROM CW1.Trail_Sights;
+SELECT * FROM CW1.Rating;
+SELECT * FROM CW1.Users WHERE user_name LIKE 'A%'; 
+SELECT * FROM CW1.Rating WHERE star_rating = 5;
+SELECT * FROM CW1.Sights ORDER BY top_sight_name ASC;
