@@ -179,3 +179,127 @@ JOIN CW1.Sights
     ON CW1.Trail_Sights.sights_id = CW1.Sights.sights_id;
 
 SELECT * FROM CW1.SpecificTrailLocationInfo;
+
+/*7. CRUD Methods*/
+/*CREATE*/
+CREATE PROCEDURE CW1.InsertSight
+    @top_sight_name VARCHAR(100)
+AS
+BEGIN
+    INSERT INTO CW1.Sights (top_sight_name) VALUES
+    (@top_sight_name);
+
+    SELECT SCOPE_IDENTITY() AS new_sight_id;
+END;
+
+
+/*READ*/
+CREATE Procedure CW1.RetrieveSightThroughID
+    @sights_id INT
+AS
+BEGIN
+    SELECT * FROM CW1.Sights
+    WHERE sights_id = @sights_id;
+END;
+
+
+/*UPDATE*/
+CREATE PROCEDURE CW1.UpdateSights
+    @sights_id INT,
+    @top_sight_name VARCHAR(100)
+AS
+BEGIN
+    UPDATE CW1.Sights
+    SET top_sight_name = @top_sight_name
+    WHERE sights_id = @sights_id;
+END;
+
+
+/*DELETE*/
+CREATE PROCEDURE CW1.DeleteSights
+    @sights_id INT
+AS
+BEGIN
+    DELETE FROM CW1.Sights
+    WHERE sights_id = @sights_id;
+END;
+
+/*Functionality Testing*/
+SELECT * FROM CW1.Sights;
+
+EXEC CW1.InsertSight @top_sight_name = 'The Ride';
+SELECT * FROM CW1.Sights;
+
+EXEC CW1.RetrieveSightThroughID @sights_id = 1;
+EXEC CW1.RetrieveSightThroughID @sights_id = 1002;
+
+SELECT * FROM CW1.Sights WHERE sights_id= 1;
+EXEC CW1.UpdateSights
+    @sights_id = 1,
+    @top_sight_name = 'The Ampitheatre';
+
+SELECT * FROM CW1.Sights WHERE sights_id= 1;
+
+EXEC CW1.DeleteSights
+    @sights_id = 1;
+
+SELECT * FROM CW1.Sights;
+
+/*TRIGGER: CREATE LOG TABLE AND TRIGGER*/
+CREATE TABLE CW1.TrailAdded_Log (
+    log_id INT IDENTITY(1,1) PRIMARY KEY,
+    trail_id INT NOT NULL,
+    user_id INT NOT NULL,
+    trail_name VARCHAR(100) NOT NULL,
+    datetime_added DATETIME NOT NULL DEFAULT GETDATE(),
+    FOREIGN KEY (trail_id) REFERENCES CW1.Trail(trail_id),
+    FOREIGN KEY (user_id) REFERENCES CW1.Users(user_id)
+);
+
+CREATE TRIGGER CW1.LogNewAddedTrail
+ON CW1.Trail
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO CW1.TrailAdded_Log (trail_id, user_id, trail_name)
+    SELECT
+        INSERTED.trail_id,
+        INSERTED.user_id,
+        INSERTED.trail_name
+    FROM INSERTED;
+END;
+
+
+/*TRIGGER TESTING*/
+
+INSERT INTO CW1.Trail (
+    location_id, user_id, estimated_time_min, estimated_time_max, 
+    route_type, difficulty, trail_name, elevation_gain, length)
+VALUES (
+    2,
+    2,
+    '02:00:00',
+    '02:30:00',
+    'Loop',
+    'Moderate',
+    'Plymbridge Woods',
+    222,
+    7.70
+);
+
+INSERT INTO CW1.Trail (
+    location_id, user_id, estimated_time_min, estimated_time_max, 
+    route_type, difficulty, trail_name, elevation_gain, length)
+VALUES (
+    1,
+    3,
+    '00:30:00',
+    '01:00:00',
+    'Loop',
+    'Easy',
+    'Plymbridge Old Canal and River Walk',
+    65,
+    2.70
+);
+
+SELECT * FROM CW1.TrailAdded_Log;
