@@ -1,0 +1,140 @@
+#swagger.yml
+
+openapi: 3.0.0
+info:
+  title: "Trail Micro-service API"
+  description: "CW2 Implementing Micro-services for Trail and Location Points Management"
+  version: "1.0.0"
+
+servers:
+  - url: "/api"
+
+paths:
+  /trails:
+    get:
+      operationId: "trails.read_all"
+      tags:
+        - "Trails"
+      summary: "Read the list of trails"
+      responses:
+        "200":
+          description: "Successfully read trail list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Trail"
+    post:
+      operationId: "trails.create"
+      tags:
+        - "Trails"
+      summary: "Create a trail"
+      requestBody:
+          description: "Trail to create"
+          required: True
+          content:
+            application/json:
+              schema:
+                x-body-name: "trail"
+                $ref: "#/components/schemas/Trail"
+      responses:
+        "201":
+          description: "Successfully created trail"
+
+  /trails/{trail_id}:
+    get:
+      operationId: "trails.read_one"
+      tags:
+        - "Trails"
+      summary: "Read one trail"
+      parameters:
+        - $ref: "#/components/parameters/trail_id"
+      responses:
+        "200":
+          description: "Successfully read trail"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trail"
+    put:
+      tags:
+        - "Trails"
+      operationId: "trails.update"
+      summary: "Update a trail"
+      parameters:
+        - $ref: "#/components/parameters/trail_id"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "trail"
+              $ref: "#/components/schemas/Trail"
+      responses:
+        "200":
+          description: "Successfully updated trail"
+    delete:
+      tags:
+        - "Trails"
+      operationId: "trails.delete"
+      summary: "Delete a trail"
+      parameters:
+        - $ref: "#/components/parameters/trail_id"
+      responses:
+        "204":
+          description: "Successfully deleted trail"
+
+components:
+  schemas:
+    Trail:
+      type: "object"
+      required:
+        - trail_name
+        - trailowner_id
+      properties:
+        trail_id:
+          type: "integer"
+          readOnly: true
+        trail_name:
+          type: "string"
+        trail_description:
+          type: "string"
+        difficulty:
+          type: "string"
+        city:
+          type: "string"
+        state:
+          type: "string"
+        country:
+          type: "string"
+        trailowner_id:
+          type: "integer"
+        points:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/LocationPoint"
+
+
+    LocationPoint:
+      type: "object"
+      properties:
+        locationpoint_id:
+          type: "integer"
+          readOnly: true
+        trail_latitude:
+          type: "number"
+          format: "float"
+        trail_longitude:
+          type: "number"
+          format: "float"
+        trail_sequence:
+          type: "integer"
+        
+  parameters:
+    trail_id:
+      name: "trail_id"
+      description: "ID of the trail to retrieve, update and delete"
+      in: path
+      required: True
+      schema:
+        type: "integer"

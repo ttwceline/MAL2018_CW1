@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trail Service API</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .trail-item { border: 1px solid #ddd; margin-bottom: 10px; padding: 10px; border-radius: 5px; }
+        .difficulty { font-weight: bold; color: #555; }
+        .owner-name { color: #007bff; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Trail Service Micro-service</h1>
+    <p><a href="/api/ui">Go to Swagger UI (API Documentation)</a></p>
+
+    <h2>Existing Trails</h2>
+    <ul>
+        {% for trail in trails %}
+            <li class="trail-item">
+                <strong>{{ trail.trail_name }}</strong> 
+                <span class="difficulty">[{{ trail.difficulty }}]</span>
+                <br>
+                {{ trail.trail_description }}
+                <br>
+                <br>
+                <small>
+                    Location: {{ trail.state }} ({{ trail.city }}, {{ trail.country }}) <br>
+                    
+                    Owned by: 
+                    <span class="owner-name">
+                        {% if trail.trailowner_id == 1 %}
+                            Ada Lovelace
+                        {% elif trail.trailowner_id == 2 %}
+                            Tim Berners-Lee
+                        {% else %}
+                            Unknown User (ID: {{ trail.trailowner_id }})
+                        {% endif %}
+                    </span>
+                </small>
+            </li>
+        {% else %}
+            <li>No trails found. Use the Swagger UI to create one!</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
