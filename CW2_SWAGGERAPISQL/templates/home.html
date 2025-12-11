@@ -28,16 +28,10 @@
                     Location: {{ trail.state }} ({{ trail.city }}, {{ trail.country }}) <br>
                     
                     Owned by: 
-                    <span class="owner-name">
-                        {% if trail.trailowner_id == 1 %}
-                            Ada Lovelace
-                        {% elif trail.trailowner_id == 2 %}
-                            Tim Berners-Lee
-                        {% else %}
-                            Unknown User (ID: {{ trail.trailowner_id }})
-                        {% endif %}
-                    </span>
-                </small>
+                <span class="owner-name">
+                    {{ trail.owner.username }}
+                </span>
+                <small>(Role: {{ trail.owner.role }})</small>
             </li>
         {% else %}
             <li>No trails found. Use the Swagger UI to create one!</li>
