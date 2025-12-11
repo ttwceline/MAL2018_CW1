@@ -1,24 +1,25 @@
+//Example
+
 {
-  "trail_name": "string",
-  "trail_description": "string “,
-  "difficulty": “string",
-  "city": "string",
-  "state": "string",
-  "country": "string",
-  "length": "float",
-  "route_type": "string", 
-  "trailowner_id": int,
+  "trail_name": "Plymbridge Circular",
+  "trail_description": "This is a gentle circular walk through ancient oak woodlands, beside the beautiful River Plym. Within the woods are remains of the area’s industrial past and there are breathtaking views across the valley from the viaduct. Along the way you may see kingfishers, sea trout, dippers, peregrine falcon, deer and other wildlife.",
+  "difficulty": "Easy",
+  "city": "Devon",
+  "state": "Plymouth",
+  "country": "England",
+  "length": 5.0,
+  "route_type": "Loop", 
+  "trailowner_id": 1,
   "points": [
     {
-      "trail_latitude": float,
-      "trail_longitude": float,
-      "trail_sequence": int
+      "trail_latitude": 50.40886,
+      "trail_longitude": -4.07859,
+      "trail_sequence": 1
     },
     {
-      "trail_latitude": float,
-      "trail_longitude": float,
-      "trail_sequence": int
+      "trail_latitude": 50.42,
+      "trail_longitude": -4.11,
+      "trail_sequence": 2
     }
   ]
 }
-
