@@ -10,6 +10,36 @@ servers:
   - url: "/api"
 
 paths:
+  /users:
+    get:
+      operationId: "users.read_all"
+      tags:
+        - "Users"
+      summary: "Read list of users"
+      responses:
+        "200":
+          description: "Successfully read user list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: "users.create"
+      tags:
+        - "Users"
+      summary: "Create a user (Role Management)"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "body"
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: "Successfully created user"
+
   /trails:
     get:
       operationId: "trails.read_all"
@@ -31,13 +61,13 @@ paths:
         - "Trails"
       summary: "Create a trail"
       requestBody:
-          description: "Trail to create"
-          required: True
-          content:
-            application/json:
-              schema:
-                x-body-name: "trail"
-                $ref: "#/components/schemas/Trail"
+        description: "Trail to create"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "body"
+              $ref: "#/components/schemas/Trail"
       responses:
         "201":
           description: "Successfully created trail"
@@ -68,7 +98,7 @@ paths:
         content:
           application/json:
             schema:
-              x-body-name: "trail"
+              x-body-name: "body"
               $ref: "#/components/schemas/Trail"
       responses:
         "200":
@@ -86,6 +116,22 @@ paths:
 
 components:
   schemas:
+    User:
+      type: "object"
+      required:
+        - user_id
+        - email
+        - role
+      properties:
+        user_id:
+          type: "integer"
+        username:
+          type: "string"
+        email:
+          type: "string"
+        role:
+          type: "string"
+
     Trail:
       type: "object"
       required:
@@ -109,11 +155,15 @@ components:
           type: "string"
         trailowner_id:
           type: "integer"
+        owner:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/User"
+
         points:
           type: "array"
           items:
             $ref: "#/components/schemas/LocationPoint"
-
 
     LocationPoint:
       type: "object"
@@ -129,7 +179,7 @@ components:
           format: "float"
         trail_sequence:
           type: "integer"
-        
+
   parameters:
     trail_id:
       name: "trail_id"
