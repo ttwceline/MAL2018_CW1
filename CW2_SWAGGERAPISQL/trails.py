@@ -3,6 +3,7 @@
 from flask import abort, make_response
 from config import db
 from models import Trail, TrailLocationPoint, trail_schema, trails_schema
+from sqlalchemy.exc import IntegrityError
 
 #1. GET
 def read_all():
@@ -12,9 +13,7 @@ def read_all():
 
 #2. POST
 def create(body):
-    """
-    Creates a new trail.
-    """
+    #Creates a new trail.
     try:
         #Trail data is loaded from trail_id
         new_trail = trail_schema.load(body, session=db.session)
@@ -24,6 +23,11 @@ def create(body):
         db.session.commit()
         
         return trail_schema.dump(new_trail), 201
+    
+    except IntegrityError:
+        # Catches if the user ID doesn't exist
+        db.session.rollback()
+        abort(400, f"User with ID {body.get('trailowner_id')} does not exist.")
 
     except Exception as e:
         print(f"Error creating trail: {e}")
@@ -38,30 +42,36 @@ def read_one(trail_id):
         return trail_schema.dump(trail)
     else:
         abort(404, f"Trail with id {trail_id} not found")
-
+        
 #4. PUT
 def update(trail_id, body):
     #Changes data to updated data through chosen trail_id
     existing_trail = Trail.query.filter(Trail.trail_id == trail_id).one_or_none()
 
     if existing_trail:
-        update_trail = trail_schema.load(body, session=db.session) 
+        try:
+            update_trail = trail_schema.load(body, session=db.session) 
+            
+            #Update fields
+            existing_trail.trail_name = update_trail.trail_name
+            existing_trail.trail_description = update_trail.trail_description
+            existing_trail.difficulty = update_trail.difficulty
+            existing_trail.city = update_trail.city
+            existing_trail.state = update_trail.state
+            existing_trail.country = update_trail.country
+            existing_trail.length = update_trail.length
+            existing_trail.route_type = update_trail.route_type
+            existing_trail.trailowner_id = update_trail.trailowner_id
+            
+            db.session.merge(existing_trail)
+            db.session.commit()
+            
+            return trail_schema.dump(existing_trail), 200
         
-        #Update fields
-        existing_trail.trail_name = update_trail.trail_name
-        existing_trail.trail_description = update_trail.trail_description
-        existing_trail.difficulty = update_trail.difficulty
-        existing_trail.city = update_trail.city
-        existing_trail.state = update_trail.state
-        existing_trail.country = update_trail.country
-        existing_trail.length = update_trail.length
-        existing_trail.route_type = update_trail.route_type
-        existing_trail.trailowner_id = update_trail.trailowner_id
-        
-        db.session.merge(existing_trail)
-        db.session.commit()
-        
-        return trail_schema.dump(existing_trail), 200
+        except IntegrityError:
+            db.session.rollback()
+            abort(400, f"User with ID {body.get('trailowner_id')} does not exist.")    
+
     else:
         abort(404, f"Trail with id {trail_id} not found")
 
